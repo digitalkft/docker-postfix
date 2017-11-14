@@ -62,7 +62,17 @@ if [[ -n "$(find /etc/postfix/certs -iname *.crt)" && -n "$(find /etc/postfix/ce
   # /etc/postfix/master.cf
   postconf -M submission/inet="submission   inet   n   -   n   -   -   smtpd"
   postconf -P "submission/inet/syslog_name=postfix/submission"
-  postconf -P "submission/inet/smtpd_tls_security_level=encrypt"
+  postconf -e smtpd_tls_security_level=may
+  postconf -e smtp_tls_security_level=may
+  postconf -P "submission/inet/smtpd_sasl_auth_enable=yes"
+  postconf -P "submission/inet/milter_macro_daemon_name=ORIGINATING"
+  postconf -P "submission/inet/smtpd_recipient_restrictions=permit_sasl_authenticated,reject_unauth_destination"
+else
+  # /etc/postfix/master.cf
+  postconf -M submission/inet="submission   inet   n   -   n   -   -   smtpd"
+  postconf -P "submission/inet/syslog_name=postfix/submission"
+  postconf -e smtpd_tls_security_level=may
+  postconf -e smtp_tls_security_level=may
   postconf -P "submission/inet/smtpd_sasl_auth_enable=yes"
   postconf -P "submission/inet/milter_macro_daemon_name=ORIGINATING"
   postconf -P "submission/inet/smtpd_recipient_restrictions=permit_sasl_authenticated,reject_unauth_destination"
